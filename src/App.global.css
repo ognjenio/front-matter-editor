@@ -1,0 +1,27 @@
+
+
+
+/*
+ * @NOTE: Prepend a `~` to css file paths that are in your node_modules
+ *        See https://github.com/webpack-contrib/sass-loader#imports
+ */
+
+body {
+  font-family: sans-serif;
+}
+
+.bordered{
+  padding: 5px 10px;
+  border-radius: 3px;
+  border: 1px solid grey;
+  width: 150px;
+}
+
+select.bordered{
+  width: 170px;
+}
+
+label{
+  font-weight: bold;
+  display: block;
+}
