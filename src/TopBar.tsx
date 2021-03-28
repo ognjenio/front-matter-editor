@@ -1,7 +1,8 @@
 import React from 'react';
 import { createStyles, fade, WithStyles, withStyles } from "@material-ui/core/styles";
-import { AppBar, Toolbar, Typography, InputBase } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, InputBase, Tooltip } from '@material-ui/core';
 import FolderIcon from '@material-ui/icons/Folder';
+import FilterIcon from '@material-ui/icons/FilterList';
 
 const styles = theme => createStyles({
   root: {
@@ -57,36 +58,28 @@ const styles = theme => createStyles({
 
 interface Props extends WithStyles<typeof styles>{ }
 
-class TopBar extends React.Component<{}, {directory: string}> {
+class TopBar extends React.Component<{}, {}> {
   [x: string]: React.RefObject<unknown>;
   constructor(props: {} | Readonly<{loadDirectory: (string)}>){
     super(props);
 
-    this.state = {
-      directory: "/home/regac/test-vault/"
-    }
-
     this.directoryInput = React.createRef();
+    this.filterInput = React.createRef();
 
     const zis = this;
     var ipcRenderer = require('electron').ipcRenderer;
     ipcRenderer.on('home-directory', function (event,store) {
-      zis.setState({directory: store}, () => {
-        zis.directoryInput.current.value = zis.state.directory;
-      })
+      zis.directoryInput.current.value = store;
     });
 
     this.setDirectory = this.setDirectory.bind(this);
   }
   setDirectory(state: Event) {
     if (state.keyCode == 13) {
-      this.props.loadDirectory(this.state.directory)
-    } else {
-      var d = state.target.value;
-      if (d[d.length - 1] != "/"){
-        d = d + '/'
-      }
-      this.setState({directory: d});
+      this.props.loadDirectory(
+        this.directoryInput.current.value,
+        this.filterInput.current.value
+      )
     }
   }
 
@@ -95,31 +88,46 @@ class TopBar extends React.Component<{}, {directory: string}> {
 
     return (
       <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography className={classes.title} variant="h6" noWrap>
-            Editor
-          </Typography>
-          <div className={classes.search}>
-            <div className={classes.FolderIcon}>
-              <FolderIcon />
+        <AppBar position="fixed">
+          <Toolbar>
+            <Typography className={classes.title} variant="h6" noWrap>
+              Editor
+            </Typography>
+            <div className={classes.search}>
+              <div className={classes.FolderIcon}>
+                <FolderIcon />
+              </div>
+              <InputBase
+                placeholder="Search…"
+                classes={{
+                  root: classes.inputRoot,
+                  input: classes.inputInput,
+                }}
+                onKeyUp={this.setDirectory}
+                inputRef={this.directoryInput}
+                initialValue={this.props.directory}
+              />
             </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'search' }}
-              onKeyUp={this.setDirectory}
-              inputRef={this.directoryInput}
-              defaultValue={this.state.directory}
-            />
-          </div>
-        </Toolbar>
-      </AppBar>
-    </div>
-
+            <div className={classes.search}>
+              <div className={classes.FolderIcon}>
+                <FilterIcon />
+              </div>
+              <Tooltip title="Enter a pattern for the filenames to load. Only markdown files will be loaded.">
+                <InputBase
+                  placeholder="Filter"
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput,
+                  }}
+                  onKeyUp={this.setDirectory}
+                  inputRef={this.filterInput}
+                  initialValue={this.props.filter}
+                />
+              </Tooltip>
+            </div>
+          </Toolbar>
+        </AppBar>
+      </div>
     )
   }
 }
