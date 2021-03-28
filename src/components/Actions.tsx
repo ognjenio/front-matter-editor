@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, InputLabel, Select, MenuItem, TextField, Button, Tooltip, Card, Grid, CardContent, Typography } from '@material-ui/core';
+import { FormControl, InputLabel, Select, MenuItem, TextField, Button, Tooltip, Card, Grid, CardContent, Typography, FormControlLabel, Switch, FormHelperText } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { createStyles } from '@material-ui/core/styles';
 
@@ -39,12 +39,15 @@ class Actions extends React.Component {
 
     this.columnRef = React.createRef();
     this.valueRef = React.createRef();
+    this.emptyOnlyRef = React.createRef();
 
     this.bulkUpdate = this.bulkUpdate.bind(this);
   }
 
   bulkUpdate(){
-    this.props.bulkUpdate(this.columnRef.current.value, this.valueRef.current.value)
+    if (this.columnRef.current.value != ''){
+      this.props.bulkUpdate(this.columnRef.current.value, this.valueRef.current.value, this.emptyOnlyRef.current.checked)
+    }
   }
 
   render(){
@@ -78,7 +81,13 @@ class Actions extends React.Component {
                     </MenuItem>
                     {this.props.columns.map((column: {field: string}) => <MenuItem value={column.field}>{column.field}</MenuItem>)}
                 </Select>
-                <TextField id="outlined-basic" label="Value" inputRef={this.valueRef} variant="outlined" fullWidth  className={classes.input} />
+                <TextField id="outlined-basic" label="Value" inputRef={this.valueRef} variant="outlined" fullWidth />
+                <FormControlLabel className={classes.input}
+                  control={<Switch name="checkedA" inputRef={this.emptyOnlyRef} />}
+                    label="Update only empty"
+                  />
+                <FormHelperText>If on, files that already have a value wont be updated</FormHelperText>
+                <br/>
                 <Button variant="contained" color="primary" onClick={this.bulkUpdate} className={classes.button}>Apply</Button>
                 <Tooltip title="Find and replace isn't currently implemented. You can use `sed -i 's/original/new/g' *.md` to get most of the way there." aria-label="add">
                   <Button className={classes.button}>Find & Replace</Button>

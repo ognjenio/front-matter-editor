@@ -37,13 +37,19 @@ class App extends React.Component<{}, {message: string, open: boolean, filterStr
     this.bulkUpdate = this.bulkUpdate.bind(this);
   }
 
-  bulkUpdate(column: string, value: string){
+  bulkUpdate(column: string, value: string, onlyEmpty: boolean){
     this.state.visibleRows.forEach((row: string) => {
-      this.saveFile(row, column, value);
+      this.saveFile(row, column, value, onlyEmpty);
     })
+
+    var message = "Updating " + this.state.visibleRows.length + "..."
+    if (onlyEmpty){
+      message = message + " (but only if empty)"
+    }
+
     this.setState({
       open: true,
-      message: "Updating " + this.state.visibleRows.length + "..."
+      message: message
     })
   }
 
@@ -123,7 +129,7 @@ class App extends React.Component<{}, {message: string, open: boolean, filterStr
 
   }
 
-  saveFile(row: string, attribute: string, value:string){
+  saveFile(row: string, attribute: string, value:string, onlyEmpty: boolean){
     var cur = this.state.rows.find((x) => x.filename == row);
     var all = {...cur}
 
@@ -153,7 +159,9 @@ class App extends React.Component<{}, {message: string, open: boolean, filterStr
       all[attribute] = null;
     }
 
-    if (all[attribute] != cur[attribute]){
+    console.log(onlyEmpty)
+
+    if (all[attribute] != cur[attribute] && (!onlyEmpty || (onlyEmpty && (cur[attribute] == null || cur[attribute].toString() == '')))){
       const matter = require('gray-matter');
       const fs = require('fs');
 
