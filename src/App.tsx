@@ -188,22 +188,21 @@ class App extends React.Component<
     ) {
       try {
         const content = matter.stringify(cur.content, all); // eslint-disable-line @typescript-eslint/no-unused-vars
+        fs.writeFile(
+          this.state.directory + cur.filename,
+          content,
+          (err: string) => {
+            if (err) return console.error(err);
+            cur[attribute] = all[attribute];
+            return true;
+          }
+        );
       } catch (e) {
         this.setState({
           open: true,
           message: `Failed parse YAML.\n\n${e}`,
         });
       }
-
-      fs.writeFile(
-        this.state.directory + cur.filename,
-        content,
-        (err: string) => {
-          if (err) return console.error(err);
-          cur[attribute] = all[attribute];
-          return true;
-        }
-      );
     }
   }
 
