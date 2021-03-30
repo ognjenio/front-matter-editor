@@ -60,8 +60,7 @@ const styles = (theme) =>
       flexGrow: 1,
       // vertical padding + font size from FolderIcon
       paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-      transition: theme.transitions.create('width'),
-      width: 'auto',
+      width: '90%',
     },
   });
 
