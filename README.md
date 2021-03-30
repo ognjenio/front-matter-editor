@@ -67,6 +67,8 @@ The app is not yet packaged for production.
 - Typescript
 - Material UI
 
+Using the excellent [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) so some remnants may remain.
+
 ## Future development
 
 - Buy and implement [XGrid](https://material-ui.com/components/data-grid/#commercial-version)
