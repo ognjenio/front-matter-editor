@@ -58,6 +58,8 @@ Then start the app in the `dev` environment:
 yarn start
 ```
 
+And before making changes please backup your work elsewhere just in case.
+
 The app is not yet packaged for production.
 
 ## What's it built in
